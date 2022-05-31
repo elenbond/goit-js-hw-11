@@ -18,7 +18,6 @@ Notiflix.Notify.init({
 const searchImage = new imageApi ();                             
 const lightbox = new SimpleLightbox('.gallery a'); 
 
-let bottomReached = false;
 
 const clearPreviousResult = () => {
     gallery.innerHTML = '';
@@ -36,7 +35,7 @@ const hideLoading = () => {
 
 const addImageCard = (hits) => {
     const markup = pictureCards(hits); 
-    gallery.insertAdjacentHTML("beforeend", pictureCards(markup));
+    gallery.insertAdjacentHTML("beforeend", markup);
     showLoading();                     
 
 }
@@ -73,17 +72,17 @@ const onSearchImageSubmit = async (event) => {
 }
 
 const onLoadMore = async () => {
+    let bottomReached = false;
     if (bottomReached) {
         hideLoading();
         return;
     }
     hideLoading();
     searchImage.incrementPage();                                             
-    await searchImage.fetchImages()                                   
-        .then(addImageCard);                                    
+    await searchImage.fetchImages().then(addImageCard);                                    
     onSearchHits();                                                                  
     lightbox.refresh();    
-        showLoading();
+    showLoading();
     if (searchImage.totalHits <= searchImage.getFetchElNum()) {
         bottomReached = true;                                                                           
         Notiflix.Notify.info(`We're sorry, but you've reached the end of search results.`);                                                            
@@ -92,22 +91,27 @@ const onLoadMore = async () => {
     }
 }
 const infiniteScroll = () => {                                                     
-    const documentRect = document
-    .documentElement.getBoundingClientRect();                                     
-    if (documentRect.bottom < document
-        .documentElement.clientHeight + 1400) {                                
+    const documentRect = document.documentElement.getBoundingClientRect();                                     
+    if (documentRect.bottom < document.documentElement.clientHeight + 1400) {                                
         onLoadMore();                                                            
     }
 }
 
-function scrollToTop() {                                                         
-  const { top: cardTop } = gallery.getBoundingClientRect();            
-  window.scrollBy({                                                              
-    top: cardTop - 100,                                                          
-    behavior: 'smooth',                                                          
-  });
-}
+// function scrollToTop() {                                                         
+//   const { top: cardTop } = gallery.getBoundingClientRect();            
+//   window.scrollBy({                                                              
+//     top: cardTop - 100,                                                          
+//     behavior: 'smooth',                                                          
+//   });
+// }
 
 form.addEventListener('submit', onSearchImageSubmit);                 
 buttonLoadMore.addEventListener('click', onLoadMore);
 window.addEventListener('scroll', throttle(infiniteScroll, 500));
+
+const formBlock = document.querySelector("div");
+formBlock.classList.add("form-container");
+const input = document.querySelector("input");
+input.classList.add("input-field");
+const buttonSubmit = document.querySelector(`button[type="submit"]`);
+buttonSubmit.classList.add("button-submit");
